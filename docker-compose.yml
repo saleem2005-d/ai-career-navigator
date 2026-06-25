@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  database-engine:
+    image: postgres:15-alpine
+    container_name: navigator-db-instance
+    environment:
+      POSTGRES_DB: career_navigator
+      POSTGRES_USER: engine_admin
+      POSTGRES_PASSWORD: super_secure_vault_password_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_node:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U engine_admin -d career_navigator"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend-runtime:
+    build: ./backend
+    container_name: navigator-core-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database-engine:5432/career_navigator
+      - SPRING_DATASOURCE_USERNAME=engine_admin
+      - SPRING_DATASOURCE_PASSWORD=super_secure_vault_password_2026
+      - GEMINI_API_KEY=AIzaSyYourValidatedGeminiTokenHere_2026
+    depends_on:
+      database-engine:
+        condition: service_healthy
+
+volumes:
+  postgres_data_node:
