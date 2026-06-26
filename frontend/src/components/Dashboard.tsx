@@ -9,15 +9,7 @@ interface AnalysisResult {
 export const Dashboard: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<AnalysisResult | null>({
-    score: 85,
-    coreVectors: ['Java', 'Spring Boot', 'Python', 'SQL', 'REST APIs', 'Git'],
-    remediationNodes: [
-      'Quantify your project metrics using business results instead of task items.',
-      'Add missing target keywords related to Cloud Engineering or microservices optimization systems.',
-      'Expand on your internship achievements to highlight engineering problem-solving.'
-    ]
-  });
+  const [result, setResult] = useState<AnalysisResult | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -28,8 +20,21 @@ export const Dashboard: React.FC = () => {
   const handleExecute = () => {
     if (!file) return;
     setLoading(true);
-    // Simulating API loading state
-    setTimeout(() => setLoading(false), 800);
+    setResult(null);
+
+    // Simulates processing data structures smoothly locally
+    setTimeout(() => {
+      setResult({
+        score: 85,
+        coreVectors: ['Java', 'Spring Boot', 'Python', 'SQL', 'REST APIs', 'Git'],
+        remediationNodes: [
+          'Quantify your project metrics using business results instead of task items.',
+          'Add missing target keywords related to Cloud Engineering or microservices optimization systems.',
+          'Expand on your internship achievements to highlight engineering problem-solving.'
+        ]
+      });
+      setLoading(false);
+    }, 1200);
   };
 
   return (
@@ -41,7 +46,7 @@ export const Dashboard: React.FC = () => {
           <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">AI Career Navigator</h1>
         </div>
         <div className="text-sm font-medium bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-slate-300">
-          User Portal
+          User Portal (Local Engine)
         </div>
       </header>
 
@@ -66,7 +71,7 @@ export const Dashboard: React.FC = () => {
                 disabled={!file || loading}
                 className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-medium text-sm py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all duration-150"
               >
-                {loading ? 'Executing Mapping...' : 'Execute Structural Mapping'}
+                {loading ? 'Analyzing Application...' : 'Execute Structural Mapping'}
               </button>
             </div>
           </div>
@@ -74,8 +79,14 @@ export const Dashboard: React.FC = () => {
 
         {/* Right Column: Analytics Matrix */}
         <div className="md:col-span-2 space-y-6">
-          {result && (
-            <div className="space-y-6 animate-fade-in">
+          {loading && (
+            <div className="h-64 border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center text-indigo-400 text-sm font-medium animate-pulse">
+              Processing data structures...
+            </div>
+          )}
+
+          {!loading && result && (
+            <div className="space-y-6">
               {/* Score & Core Vectors row */}
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div className="sm:col-span-1 bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
@@ -111,6 +122,12 @@ export const Dashboard: React.FC = () => {
                   ))}
                 </ul>
               </div>
+            </div>
+          )}
+
+          {!loading && !result && (
+            <div className="h-64 border border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center text-slate-500 text-sm font-medium">
+              Upload a file and execute matrix mapping to generate metrics analytics.
             </div>
           )}
         </div>
